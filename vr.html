@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kangoorite VR</title>
+    <title>Experiencia de VR</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/r128/examples/js/loaders/VRButton.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,21 +26,25 @@
         const loader = new THREE.TextureLoader();
         const texture = loader.load('https://live.staticflickr.com/65535/52021840243_c2456d0c0b_h.jpg');
         const geometry = new THREE.SphereGeometry(20, 60, 40);
-        
+
         // Configuración de un material oscuro
         const material = new THREE.MeshBasicMaterial({
             map: texture,
             side: THREE.BackSide,
             color: 0x222222 // Color oscuro para el material
         });
-        
+
         const sphere = new THREE.Mesh(geometry, material);
         scene.add(sphere);
 
         camera.position.z = 0.1;
 
+        // Habilitar el movimiento del dispositivo móvil
+        const controls = new THREE.DeviceOrientationControls(camera);
+        
         const animate = function () {
             requestAnimationFrame(animate);
+            controls.update(); // Actualizar el movimiento del dispositivo
             renderer.render(scene, camera);
         };
 
