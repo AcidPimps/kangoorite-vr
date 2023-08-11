@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiencia de WebXR con Interacciones</title>
+    <title>Experiencia de WebXR con Rotación y Panorámica Esférica</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/r128/examples/js/loaders/VRButton.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,25 +27,12 @@
         const panoramaTexture = loader.load('https://live.staticflickr.com/65535/52021840243_c2456d0c0b_h.jpg');
         
         const geometry = new THREE.SphereGeometry(500, 60, 40);
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            metalness: 0.2,
-            roughness: 0.7,
-            envMapIntensity: 1,
+        const material = new THREE.MeshBasicMaterial({
             map: panoramaTexture,
+            side: THREE.BackSide
         });
         const sphere = new THREE.Mesh(geometry, material);
         scene.add(sphere);
-
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(1, 1, 1).normalize();
-        scene.add(light);
-
-        const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-        const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-        const interactiveCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        interactiveCube.position.set(0, 1, -5);
-        scene.add(interactiveCube);
 
         camera.position.set(0, 1.6, 0);
 
@@ -70,29 +57,10 @@
 
         const onXRFrame = (time, frame) => {
             xrSession.requestAnimationFrame(onXRFrame);
-            interactiveCube.rotation.x += 0.01;
-            interactiveCube.rotation.y += 0.01;
+            // Rotación lenta hacia la derecha
+            sphere.rotation.y += 0.001;
             renderer.render(scene, camera);
         };
-
-        const controller = renderer.xr.getController(0);
-        scene.add(controller);
-
-        const controllerGrip = renderer.xr.getControllerGrip(0);
-        controllerGrip.add(new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.3)));
-        scene.add(controllerGrip);
-
-        const onSelect = (event) => {
-            if (event.target === controller) {
-                const intersects = controller.intersectObject(interactiveCube);
-
-                if (intersects.length > 0) {
-                    alert('¡Interactuaste con el cubo!');
-                }
-            }
-        };
-
-        controller.addEventListener('selectstart', onSelect);
 
         xrButton.addEventListener('click', startXR);
 
